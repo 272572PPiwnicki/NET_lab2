@@ -32,6 +32,12 @@ Projekt konsolowej aplikacji w języku C# umożliwiającej pobieranie danych pog
 
 ---
 
+## 🌲 Drzewo projektu
+
+![image](https://github.com/user-attachments/assets/33915a19-eb82-4382-a8bc-ffa7b83d0b0e)
+
+---
+
 ## 🌍 Wykorzystane API
 
 - **OpenWeatherMap API**  
@@ -59,12 +65,18 @@ Program wykorzystuje ORM Entity Framework Core i tworzy bazę danych `weather.db
 
 ---
 
-## 🧩 Główne klasy
+## 🔍 Kluczowe klasy
 
-- `Program.cs` – logika menu, pobierania danych, zapisu i wyświetlania
-- `WeatherDbContext.cs` – konfiguracja bazy i relacji EF Core
-- `WeatherEntry.cs` – pojedynczy pomiar pogodowy
-- `City.cs` – reprezentacja miasta
-- `WeatherData.cs` i `MainInfo.cs` – klasy do deserializacji danych JSON z API
+- **City** – przechowuje nazwę miasta i powiązane pomiary (`WeatherEntry`).
+- **WeatherEntry** – pojedynczy rekord pogodowy (temperatura, wilgotność, ciśnienie, data).
+- **WeatherDbContext** – konfiguracja bazy danych EF Core, relacja 1:N, unikalny indeks (CityId + Date).
+![image](https://github.com/user-attachments/assets/91b4ffe2-d2d5-4fa6-94d7-2b243ee16222)
+
+
+- **WeatherData / MainInfo** – klasy służące do deserializacji danych pogodowych z JSON (API).
+- **Program** – logika aplikacji konsolowej: menu, pobieranie danych z API, zapis do bazy, wyświetlanie.
+- **ShowAllWeather()** - metoda w klasie Program, wyświetlająca zapisane pomiary pogodowe z bazy danych.
+![image](https://github.com/user-attachments/assets/a6132d9f-d4cc-4fa4-883f-9397527f3b2e)
+![image](https://github.com/user-attachments/assets/43dd8631-742b-4325-9308-70fdd8740dfe)
 
 ---
