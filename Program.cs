@@ -52,7 +52,7 @@ namespace WeatherAppExercise
                 return;
             }
 
-            using var db = new WeatherDbContext(); // tworzenie instanci bazy danych
+            using var db = new WeatherDbContext(); // tworzenie instancji bazy danych
             db.Database.EnsureCreated(); // sprawdzamy czy baza istnieje, jesli nie tworzymy ja automatycznie
 
             var city = db.Cities.FirstOrDefault(c => c.Name == city_name); // sprawdzamy czy miasto istnieje w bazie

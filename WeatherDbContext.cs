@@ -13,9 +13,10 @@ namespace WeatherAppExercise
         public DbSet<City> Cities { get; set; } // tabela miast
         public DbSet<WeatherEntry> WeatherEntries { get; set; } // tabela pomiarow
 
+        // metoda uruchamiana automatycznie przy uzyciu new WeatherDbContext()
         protected override void OnConfiguring(DbContextOptionsBuilder options) // konfiguracja bazy
         {
-            options.UseSqlite("Data Source=weather.db");
+            options.UseSqlite("Data Source=weather.db"); // okresla z jaka baza danych ma sie laczyc
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
