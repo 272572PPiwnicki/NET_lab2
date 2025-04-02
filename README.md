@@ -80,3 +80,8 @@ Program wykorzystuje ORM Entity Framework Core i tworzy bazę danych `weather.db
 ![image](https://github.com/user-attachments/assets/43dd8631-742b-4325-9308-70fdd8740dfe)
 
 ---
+
+## 🧩 Relacje między encjami
+
+Aplikacja wykorzystuje relację jeden-do-wielu (1:N) między City a WeatherEntry – jedno miasto może mieć wiele zapisów pogodowych. Relacja została zdefiniowana w WeatherDbContext, a dodatkowo zastosowano unikalny indeks (CityId + Date), który zapobiega zapisywaniu więcej niż jednego pomiaru dziennie dla danego miasta.
+![image](https://github.com/user-attachments/assets/6ed31f69-3f5d-4630-85f1-b08eaf45cf63)
