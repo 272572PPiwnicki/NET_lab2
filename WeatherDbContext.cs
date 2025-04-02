@@ -9,20 +9,23 @@ namespace WeatherAppExercise
 {
     public class WeatherDbContext : DbContext
     {
-        public DbSet<City> Cities { get; set; }
-        public DbSet<WeatherEntry> WeatherEntries { get; set; }
+        // definicje tabel
+        public DbSet<City> Cities { get; set; } // tabela miast
+        public DbSet<WeatherEntry> WeatherEntries { get; set; } // tabela pomiarow
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        protected override void OnConfiguring(DbContextOptionsBuilder options) // konfiguracja bazy
         {
             options.UseSqlite("Data Source=weather.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WeatherEntry>() // jeden pomiar dziennie na miasto
+            // tworzy unikalny indeks na kombinacji CityId i Date - dla jednego miasto moze byc tylko jeden wpis z dana data
+            modelBuilder.Entity<WeatherEntry>()
                 .HasIndex(e => new { e.CityId, e.Date })
                 .IsUnique();
 
+            // konfiguracja relacji 1:N City-WeatherEntry
             modelBuilder.Entity<City>()
                 .HasMany(c => c.WeatherEntries)
                 .WithOne(e => e.City)

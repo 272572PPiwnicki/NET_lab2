@@ -22,16 +22,16 @@ namespace WeatherAppExercise
                 switch (choice)
                 {
                     case "1":
-                        await FetchWeatherAndSave();
+                        await FetchWeatherAndSave(); // pobiera dane z API i zapisuje do bazy
                         break;
                     case "2":
-                        ShowAllWeather();
+                        ShowAllWeather(); // pokazuje dane z bazy
                         break;
                     case "3":
-                        Console.WriteLine("Exiting program...");
+                        Console.WriteLine("Exiting program..."); // wychodzi z programu
                         return;
                     default:
-                        Console.WriteLine("Invalid option");
+                        Console.WriteLine("Invalid option"); // obsluga nieprawidlowego wyboru
                         break;
                 }
             }
@@ -52,19 +52,19 @@ namespace WeatherAppExercise
                 return;
             }
 
-            using var db = new WeatherDbContext();
-            db.Database.EnsureCreated(); // sprawdzamy czy baza istnieje
+            using var db = new WeatherDbContext(); // tworzenie instanci bazy danych
+            db.Database.EnsureCreated(); // sprawdzamy czy baza istnieje, jesli nie tworzymy ja automatycznie
 
             var city = db.Cities.FirstOrDefault(c => c.Name == city_name); // sprawdzamy czy miasto istnieje w bazie
 
             if (city == null)
             {
                 city = new City { Name = city_name };
-                db.Cities.Add(city);
-                db.SaveChanges(); // dodanie nowego miasta
+                db.Cities.Add(city); // dodanie nowego miasta
+                db.SaveChanges(); // zapisujemy
             }
 
-            // sprawdzamy czy mamy pomiar z dzisiaj
+            // sprawdzamy czy mamy pomiar z dzisiaj dla danego miasta
             var today = DateTime.Today;
             bool exists = db.WeatherEntries.Any(e => e.CityId == city.Id && e.Date == today);
 
@@ -78,21 +78,21 @@ namespace WeatherAppExercise
 
             try
             {
-                var response = await client.GetAsync(userURL);
+                var response = await client.GetAsync(userURL); // wysylamy zapytanie HTTP GET
 
+                // jesli odpowiedz nie jest OK - wyswietlamy blad i konczymy
                 if (!response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                    Console.WriteLine($"Error: {response.StatusCode}");
                     return;
                 }
 
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var weatherData = JsonSerializer.Deserialize<WeatherData>(jsonString);
+                var jsonString = await response.Content.ReadAsStringAsync(); // pobieramy tresc odpowiedzi jako string
+                var weatherData = JsonSerializer.Deserialize<WeatherData>(jsonString); // deserializujemy JSON do obiektu WeatherData
 
                 if (weatherData != null && weatherData.main != null)
                 {
-                    // Zapis do bazy danych
-                    var entry = new WeatherEntry
+                    var entry = new WeatherEntry // tworzymy nowy wpis na podstawie danych pogodowych
                     {
                         CityId = city.Id,
                         Temperature = weatherData.main.temp,
@@ -101,8 +101,8 @@ namespace WeatherAppExercise
                         Date = today
                     };
 
-                    db.WeatherEntries.Add(entry);
-                    db.SaveChanges();
+                    db.WeatherEntries.Add(entry); // dodajemy
+                    db.SaveChanges(); // zapisujemy
 
                     Console.WriteLine($"\nWeather in {city_name} on {today:yyyy-MM-dd}:");
                     Console.WriteLine($"Temperature: {entry.Temperature}°C");
@@ -115,11 +115,11 @@ namespace WeatherAppExercise
                     Console.WriteLine("Unable to parse weather data.");
                 }
             }
-            catch (HttpRequestException e)
+            catch (HttpRequestException e) // obsluga bledu HTTP
             {
                 Console.WriteLine($"\nHTTP error: {e.Message}");
             }
-            catch (Exception e)
+            catch (Exception e) // obsluga innych bledow
             {
                 Console.WriteLine($"\nUnexpected error: {e.Message}");
             }
@@ -128,8 +128,8 @@ namespace WeatherAppExercise
         {
             using var db = new WeatherDbContext();
             var entries = db.WeatherEntries
-                            .OrderByDescending(e => e.Date)
-                            .ThenBy(e => e.City.Name)
+                            .OrderByDescending(e => e.Date) // sortowanie malejaco po dacie
+                            .ThenBy(e => e.City.Name) // gdy data jest ta sama, sortujemy alfabetycznie
                             .ToList();
 
             if (entries.Count == 0)
@@ -145,7 +145,7 @@ namespace WeatherAppExercise
 
             foreach (var entry in entries)
             {
-                string city = db.Cities.Find(entry.CityId)?.Name ?? "(unknown)";
+                string city = db.Cities.Find(entry.CityId)?.Name ?? "(unknown)"; // szuka miasta w bazie danych po ID - jesli znajdzie to przypisuje jego nazwe, jesli nie to przypisuje unknown
                 Console.WriteLine($"{city,-12}\t{entry.Date:yyyy-MM-dd}\t{entry.Temperature,9:0.00}\t{entry.Humidity,11}%\t{entry.Pressure,14}");
             }
         }

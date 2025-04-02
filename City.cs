@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace WeatherAppExercise
 {
+    // encja reprezentujaca miasto w bazie danych
     public class City
     {
         public int Id { get; set; } // PK
         public string Name { get; set; }
 
-        public List<WeatherEntry> WeatherEntries { get; set; } // relacja: miasto moze miec wiele pomiarow
+        // relacja 1:N z WeatherEntry
+        public List<WeatherEntry> WeatherEntries { get; set; } // lista pomiarow przypisanych do miasta
     }
 }
